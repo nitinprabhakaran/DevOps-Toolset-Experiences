@@ -1,0 +1,19 @@
+---
+- name: Create FileSystems
+  hosts: all
+  tasks:
+  	- filesystem:
+  		fstype: ext4
+  		dev: /dev/vg1/lvol1
+  		opts: -cc #Extra options can be passed here
+
+- name: Mount Filesystem
+  hosts: all
+  tasks:
+  	- mount:
+  		fstype: ext4
+  		src: /dev/vg1/lvol1
+  		path: /opt/app
+  		state: mounted
+
+---

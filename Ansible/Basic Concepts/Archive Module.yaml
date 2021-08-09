@@ -1,0 +1,75 @@
+---
+- name: Using Archive Module
+  hosts: all
+  tasks:
+  	- archive:
+  		  path: /opt/app/web
+  		  dest: /tmp/web.gz
+        format: gz|zip|tar|bz2|xz #Default is gzip
+    - unarchive:
+        src: /tmp/web.gz
+        dest: /opt/app/web 
+        remote_src: yes # This option is to be enabled when the archived file is present n target machine and is to be uncompressed then and there
+
+---
+
+- name: Compress directory /path/to/foo/ into /path/to/foo.tgz
+  archive:
+    path: /path/to/foo
+    dest: /path/to/foo.tgz
+
+- name: Compress regular file /path/to/foo into /path/to/foo.gz and remove it
+  archive:
+    path: /path/to/foo
+    remove: yes
+
+- name: Create a zip archive of /path/to/foo
+  archive:
+    path: /path/to/foo
+    format: zip
+
+- name: Create a bz2 archive of multiple files, rooted at /path
+  archive:
+    path:
+    - /path/to/foo
+    - /path/wong/foo
+    dest: /path/file.tar.bz2
+    format: bz2
+
+- name: Create a bz2 archive of a globbed path, while excluding specific dirnames
+  archive:
+    path:
+    - /path/to/foo/*
+    dest: /path/file.tar.bz2
+    exclude_path:
+    - /path/to/foo/bar
+    - /path/to/foo/baz
+    format: bz2
+
+- name: Create a bz2 archive of a globbed path, while excluding a glob of dirnames
+  archive:
+    path:
+    - /path/to/foo/*
+    dest: /path/file.tar.bz2
+    exclude_path:
+    - /path/to/foo/ba*
+    format: bz2
+
+---
+
+# Example from Ansible Playbooks
+- unarchive:
+    src: foo.tgz
+    dest: /var/lib/foo
+
+# Unarchive a file that is already on the remote machine
+- unarchive:
+    src: /tmp/foo.zip
+    dest: /usr/local/bin
+    remote_src: True
+
+# Unarchive a file that needs to be downloaded (added in 2.0)
+- unarchive:
+    src: https://example.com/example.zip
+    dest: /usr/local/bin
+    remote_src: True
